@@ -1,0 +1,7 @@
+{
+    "getAllAgents": "SELECT * FROM agents_dim",
+    "getAgentByAgentId": "SELECT * FROM agents_dim WHERE AgentId = ?",
+    "getAgentNameByAgentId": "SELECT AgentName FROM agents_dim WHERE AgentId = ?",
+    "getAgentID": "SELECT * FROM agents_dim ORDER BY AgentId DESC LIMIT 1 ",
+    "getAgentCount": "SELECT COUNT(*) FROM agents_dim"
+}

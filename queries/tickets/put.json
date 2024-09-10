@@ -1,0 +1,3 @@
+{
+    "updateTicketDetails": "Update tickets_fact SET ResolvedDate = ?, Status = ? WHERE TicketId = ?"
+}

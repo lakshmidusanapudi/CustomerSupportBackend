@@ -1,0 +1,4 @@
+{
+    "createAgentTable": "CREATE TABLE IF NOT EXISTS agents_dim(AgentId VARCHAR(255) PRIMARY KEY, AgentName VARCHAR(255), AgentDepartment VARCHAR(255), AgentEmail VARCHAR(255) UNIQUE, TicketCount Int DEFAULT 0, TicketIds JSON DEFAULT NULL)",
+    "createAgent": "INSERT INTO agents_dim (AgentId, AgentName, AgentDepartment, AgentEmail) VALUES(?, ?, ?, ?)"
+}

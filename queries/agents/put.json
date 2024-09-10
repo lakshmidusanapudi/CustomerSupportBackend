@@ -1,0 +1,3 @@
+{
+    "updateAgent": "UPDATE agents_dim SET TicketCount = ?, TicketIds = ? WHERE AgentId = ?"
+}
