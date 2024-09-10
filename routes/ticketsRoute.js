@@ -10,7 +10,7 @@ router.post("/addTicket", async (req, res) => {
    
     try {
         await connection.query(createQueries.createTicketsTable); 
-        const { CustomerEmail,AssigneeName,AgentId,CreatedDate, Subject, Description, OrderId } = req.body;
+        const { CustomerEmail,AssigneeName,AgentId,CreatedDate, Priority,Subject, Description, OrderId } = req.body;
         if (!CustomerEmail || !Subject || !Description || !OrderId ||!AgentId ||!CreatedDate) {
             return res.status(400).send({ error: "All fields are required..." });
         }
@@ -27,7 +27,7 @@ router.post("/addTicket", async (req, res) => {
         }
         const insertQuery = createQueries.createTicket;
         // TicketId, CustomerEmail, AssigneeName, AgentId, Subject, Description,OrderId
-        await connection.query(insertQuery, [newTId, CustomerEmail,AssigneeName,AgentId, Subject, Description, OrderId]);
+        await connection.query(insertQuery, [newTId, CustomerEmail,AssigneeName,AgentId,CreatedDate,Priority,Subject, Description, OrderId]);
         return res.status(200).send({ message: "Ticket added successfully...." });
     } catch (error) {
         console.error("Error in the addTicket:", error);
@@ -62,21 +62,19 @@ router.put("/updateTicket/:TicketId", async(req, res) => {
 router.get("/getAllTickets", async(req, res) => {
     let connection;
     try {
-        connection = await pool.getConnection(); // Get connection from pool
+       
         const [result] = await connection.query(getQueries.getAllTickets);
         return res.status(200).send(result);
     } catch (error) {
         console.error("Error in the getAllTickets:", error);
         return res.status(500).send({ error: "Internal Server Error" });
-    } finally {
-        if (connection) connection.release(); // Always release the connection
-    }
+    } 
 });
 
 router.get("/getTicketStatus/:TicketId", async (req, res) => {
     let connection;
     try {
-        connection = await pool.getConnection(); 
+      
         const { TicketId } = req.params;
         if (!TicketId) {
             return res.status(400).send({ error: "TicketId is required" });
@@ -90,11 +88,11 @@ router.get("/getTicketStatus/:TicketId", async (req, res) => {
     } catch (error) {
         console.error("Error fetching ticket status:", error);
         return res.status(500).send({ error: "Internal Server Error" });
-    } finally {
-        if (connection) connection.release(); // Always release the connection
-    }
+    } 
 });
-router.get('/getticket')
+router.get('/getticket/month',async(req,res)=>{
+
+})
 
 
 module.exports = router;
