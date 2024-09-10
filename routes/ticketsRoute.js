@@ -69,16 +69,16 @@ router.get("/getAllTickets", async(req, res) => {
     } 
 });
 
-router.get("/getPendingTickets", async(req, res) => {
+router.get("/getPendingTickets", async (req, res) => {
     try {
         const [result] = await connection.query(getQueries.getTicketByStatusOpen);
+        console.log(result)
         return res.status(200).send(result);
     } catch (error) {
-        console.error("Error in the getAllTickets:", error);
-        return res.status(500).send({ error: "Internal Server Error" });
-    } 
+        console.error("Error in the getPendingTickets:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
 });
-
 
 router.get("/getResolvedTickets", async(req, res) => {
     try {
