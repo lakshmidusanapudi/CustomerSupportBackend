@@ -72,7 +72,7 @@ router.get("/getAllTickets", async(req, res) => {
 router.get("/getPendingTickets", async (req, res) => {
     try {
         const [result] = await connection.query(getQueries.getTicketByStatusOpen);
-        console.log(result)
+        // console.log(result)
         return res.status(200).send(result);
     } catch (error) {
         console.error("Error in the getPendingTickets:", error);
@@ -120,8 +120,19 @@ router.get("/getTicketStatus/:TicketId", async (req, res) => {
         return res.status(500).send({ error: "Internal Server Error" });
     } 
 });
-router.get('/getticket/month',async(req,res)=>{
+router.get('/getticketsbymonth',async(req,res)=>{
+    try {
+        const [results] = await connection.query(getQueries.getTicketsbymonth)
+        const formattedResults = results.map(row => ({
+            month: row.Month,
+            TicketsCount: row.TicketsCount
+        }));
 
+        res.status(200).send(formattedResults);
+    } catch (err) {
+        console.error('Error retrieving tickets count by month:', err.stack);
+        res.status(500).send({ error: "Internal server error." });
+    }
 })
 
 
