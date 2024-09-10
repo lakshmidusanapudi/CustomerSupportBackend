@@ -37,7 +37,7 @@ router.post("/addTicket", async (req, res) => {
 
 //status 
 router.put("/updateTicket/:TicketId", async(req, res) => {
-    let connection;
+
     try {
         const { updateDate } = req.body;
         const { TicketId } = req.params;
@@ -60,9 +60,7 @@ router.put("/updateTicket/:TicketId", async(req, res) => {
 });
 
 router.get("/getAllTickets", async(req, res) => {
-    let connection;
     try {
-       
         const [result] = await connection.query(getQueries.getAllTickets);
         return res.status(200).send(result);
     } catch (error) {
@@ -72,7 +70,7 @@ router.get("/getAllTickets", async(req, res) => {
 });
 
 router.get("/getTicketStatus/:TicketId", async (req, res) => {
-    let connection;
+
     try {
       
         const { TicketId } = req.params;
