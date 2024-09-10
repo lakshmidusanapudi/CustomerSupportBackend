@@ -3,5 +3,7 @@
     "getTicketByTicketId": "SELECT * FROM tickets_fact WHERE TicketId = ?",
     "getTicket": "SELECT * FROM tickets_fact ORDER BY TicketId DESC LIMIT 1",
     "getTicketCount": "SELECT COUNT(*) FROM tickets_fact",
-    "getTicketStatus":"Select Status from tickets_fact where TicketId=?"
+    "getTicketStatus":"Select Status from tickets_fact where TicketId=?",
+    "getTicketByStatusOpen ":"SELECT COUNT(*) FROM tickets_fact where Status = 'OPEN'",
+    "getTicketByStatusClose":"SELECT COUNT(*) FROM tickets_fact where Status = 'CLOSED'"
 }
