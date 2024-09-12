@@ -17,9 +17,9 @@ router.post("/addTicket", async (req, res) => {
         
         await connection.query(createQueries.createTicketsTable);
 
-        const { productId, customerId, CreatedDate, Priority, Subject, Description, Feedback, PhnNumber } = req.body;
+        const { productId, customerId, Priority, Subject, Description, Feedback, PhnNumber } = req.body;
 
-        if (!productId || !customerId || !CreatedDate || !Priority || !Subject || !Description || !Feedback || !PhnNumber) {
+        if (!productId || !customerId || !Priority || !Subject || !Description || !Feedback || !PhnNumber) {
             return res.status(400).send({ error: "All fields are required..." });
         }
 
@@ -49,7 +49,7 @@ router.post("/addTicket", async (req, res) => {
         const [AssigneeData] = await connection.query(getAgentQuery.getAllAgents);
         const assignee = AssigneeData[AssigneeIndex]; 
         const insertQuery = createQueries.createTicket;
-        await connection.query(insertQuery, [newTId, productId,customerId, assignee.AgentName, assignee.AgentId,CreatedDate,Priority, Subject, Description, Feedback, PhnNumber]);
+        await connection.query(insertQuery, [newTId, productId,customerId, assignee.AgentName, assignee.AgentId ,Priority, Subject, Description, Feedback, PhnNumber]);
         await connection.query(updateagent.updateTicketCountQuery,[newTId,assignee.AgentId])
         await connection.commit();
 
@@ -73,15 +73,15 @@ router.put("/updateTicket/:TicketId", async (req, res) => {
     let connection;
     try {
         connection = await pool.getConnection();
-        const { ResolvedDate,Status } = req.body;
+        const { Status } = req.body;
         const { TicketId } = req.params;
 
         // Validate input
-        if (!ResolvedDate || !TicketId ||!Status) {
-            return res.status(400).send({ error: "Update date and TicketId are required." });
+        if (!Status) {
+            return res.status(400).send({ error: "Status Required." });
         }
 
-        const [result] = await connection.query(updateQuery.updateTicketDetails, [ResolvedDate, Status,TicketId]);
+        const [result] = await connection.query(updateQuery.updateTicketDetails, [Status, TicketId]);
 
         // Check if the ticket was updated
         if (result.affectedRows === 0) {
