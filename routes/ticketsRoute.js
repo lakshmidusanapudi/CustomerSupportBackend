@@ -1,19 +1,27 @@
 const express = require("express");
 const createQueries = require("../queries/tickets/post.json");
 const getQueries = require("../queries/tickets/get.json");
-const connection = require("../db/config.js");
+const pool = require("../db/config.js");
 const updateQuery = require("../queries/tickets/put.json");
 const getAgentQuery = require("../queries/agents/get.json");
 const router = express.Router();
 
+
+
 router.post("/addTicket", async (req, res) => {
-   
+    let connection;
     try {
-        await connection.query(createQueries.createTicketsTable); 
-        const { productId, customerId, AssigneeName, AgentId,CreatedDate,Priority, Subject, Description,Feedback,PhnNumber } = req.body;
-        if (!productId|| !customerId||! AssigneeName || !AgentId||!CreatedDate||!Priority||! Subject||! Description||!Feedback||!PhnNumber) {
+        connection = await pool.getConnection(); 
+        await connection.beginTransaction(); 
+        
+        await connection.query(createQueries.createTicketsTable);
+
+        const { productId, customerId, CreatedDate, Priority, Subject, Description, Feedback, PhnNumber } = req.body;
+
+        if (!productId || !customerId || !CreatedDate || !Priority || !Subject || !Description || !Feedback || !PhnNumber) {
             return res.status(400).send({ error: "All fields are required..." });
         }
+
         const [latestTId] = await connection.query(getQueries.getTicket);
         let newTId = "TID1";
         let currentId = 0;
@@ -25,20 +33,48 @@ router.post("/addTicket", async (req, res) => {
             const newId = currentId + 1;
             newTId = `TID${newId}`;
         }
+
+       
+        const [agentCountResult] = await connection.query(getAgentQuery.getAgentCount);
+        const agentsCount = agentCountResult[0]?.count;
+
+      
+        const [ticketsCountResult] = await connection.query(getQueries.getTicketCount);
+        const ticketsCount = ticketsCountResult[0]?.count;
+
+       
+        const AssigneeIndex = ticketsCount % agentsCount;
+
+        const [AssigneeData] = await connection.query(getAgentQuery.getAllAgents);
+        const assignee = AssigneeData[AssigneeIndex]; 
+
+      
         const insertQuery = createQueries.createTicket;
-        // TicketId, CustomerEmail, AssigneeName, AgentId, Subject, Description,OrderId
-        await connection.query(insertQuery, [newTId,productId, customerId, AssigneeName, AgentId,CreatedDate,Priority, Subject, Description,Feedback,PhnNumber]);
-        return res.status(200).send({ message: "Ticket added successfully...." });
+        await connection.query(insertQuery, [newTId, productId,customerId, assignee.AgentName, assignee.AgentId,CreatedDate,Priority, Subject, Description, Feedback, PhnNumber]);
+
+        
+        await connection.commit();
+
+        return res.status(200).send({ message: "Ticket added successfully and assigned to agent...." });
     } catch (error) {
-        console.error("Error in the addTicket:", error);
-        return res.status(500).send({ error: "Internal Server Error..." });
-    } 
+        if (connection) {
+            await connection.rollback(); 
+        }
+        console.log("Error in the addTicket: ", error);
+        return res.status(500).send({ error: "Internal Server error..." });
+    } finally {
+        if (connection) {
+            connection.release(); 
+        }
+    }
 });
+
 
 //status 
 router.put("/updateTicket/:TicketId", async(req, res) => {
-
+    let connection;
     try {
+        connection = await pool.getConnection();
         const { updateDate } = req.body;
         const { TicketId } = req.params;
         if (!updateDate || !TicketId) {
@@ -60,7 +96,9 @@ router.put("/updateTicket/:TicketId", async(req, res) => {
 });
 
 router.get("/getAllTickets", async(req, res) => {
+    let connection;
     try {
+        connection = await pool.getConnection();
         const [result] = await connection.query(getQueries.getAllTickets);
         return res.status(200).send(result);
     } catch (error) {
@@ -70,7 +108,9 @@ router.get("/getAllTickets", async(req, res) => {
 });
 
 router.get("/getPendingTickets", async (req, res) => {
+    let connection;
     try {
+        connection = await pool.getConnection();
         const [result] = await connection.query(getQueries.getTicketByStatusOpen);
         // console.log(result)
         return res.status(200).send(result);
@@ -81,7 +121,9 @@ router.get("/getPendingTickets", async (req, res) => {
 });
 
 router.get("/getResolvedTickets", async(req, res) => {
+    let connection;
     try {
+        connection = await pool.getConnection();
         const [result] = await connection.query(getQueries.getTicketByStatusClose);
         return res.status(200).send(result);
     } catch (error) {
@@ -92,7 +134,9 @@ router.get("/getResolvedTickets", async(req, res) => {
 
 
 router.get("/getTicketCount", async(req, res) => {
+    let connection;
     try {
+        connection = await pool.getConnection();
         const [result] = await connection.query(getQueries.getTicketCount);
         return res.status(200).send(result);
     } catch (error) {
@@ -103,8 +147,9 @@ router.get("/getTicketCount", async(req, res) => {
 
 router.get("/getTicketStatus/:TicketId", async (req, res) => {
 
+    let connection;
     try {
-      
+        connection = await pool.getConnection();
         const { TicketId } = req.params;
         if (!TicketId) {
             return res.status(400).send({ error: "TicketId is required" });
@@ -121,7 +166,9 @@ router.get("/getTicketStatus/:TicketId", async (req, res) => {
     } 
 });
 router.get('/getticketsbymonth',async(req,res)=>{
+    let connection;
     try {
+        connection = await pool.getConnection();
         const [results] = await connection.query(getQueries.getTicketsbymonth)
         const formattedResults = results.map(row => ({
             month: row.Month,
