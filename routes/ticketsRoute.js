@@ -10,8 +10,8 @@ router.post("/addTicket", async (req, res) => {
    
     try {
         await connection.query(createQueries.createTicketsTable); 
-        const { CustomerEmail,AssigneeName,AgentId,CreatedDate, Priority,Subject, Description, OrderId } = req.body;
-        if (!CustomerEmail || !Subject || !Description || !OrderId ||!AgentId ||!CreatedDate) {
+        const { productId, customerId, AssigneeName, AgentId,CreatedDate,Priority, Subject, Description,Feedback,PhnNumber } = req.body;
+        if (!productId|| !customerId||! AssigneeName || !AgentId||!CreatedDate||!Priority||! Subject||! Description||!Feedback||!PhnNumber) {
             return res.status(400).send({ error: "All fields are required..." });
         }
         const [latestTId] = await connection.query(getQueries.getTicket);
@@ -27,7 +27,7 @@ router.post("/addTicket", async (req, res) => {
         }
         const insertQuery = createQueries.createTicket;
         // TicketId, CustomerEmail, AssigneeName, AgentId, Subject, Description,OrderId
-        await connection.query(insertQuery, [newTId, CustomerEmail,AssigneeName,AgentId,CreatedDate,Priority,Subject, Description, OrderId]);
+        await connection.query(insertQuery, [newTId,productId, customerId, AssigneeName, AgentId,CreatedDate,Priority, Subject, Description,Feedback,PhnNumber]);
         return res.status(200).send({ message: "Ticket added successfully...." });
     } catch (error) {
         console.error("Error in the addTicket:", error);
