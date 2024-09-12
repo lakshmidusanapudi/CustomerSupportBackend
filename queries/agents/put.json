@@ -1,3 +1,4 @@
 {
-    "updateAgent": "UPDATE agents_dim SET TicketCount = ?, TicketIds = ? WHERE AgentId = ?"
+    "updateAgent": "UPDATE agents_dim SET TicketCount = ?, TicketIds = ? WHERE AgentId = ?",
+    "updateTicketCountQuery" :"UPDATE agents_dim SET TicketCount = TicketCount + 1,TicketIds = JSON_ARRAY_APPEND(TicketIds, '$', ?) WHERE AgentId = ?;"
 }

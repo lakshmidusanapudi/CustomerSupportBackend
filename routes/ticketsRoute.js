@@ -4,6 +4,7 @@ const getQueries = require("../queries/tickets/get.json");
 const pool = require("../db/config.js");
 const updateQuery = require("../queries/tickets/put.json");
 const getAgentQuery = require("../queries/agents/get.json");
+const updateagent=require('../queries/agents/put.json')
 const router = express.Router();
 
 
@@ -47,12 +48,9 @@ router.post("/addTicket", async (req, res) => {
 
         const [AssigneeData] = await connection.query(getAgentQuery.getAllAgents);
         const assignee = AssigneeData[AssigneeIndex]; 
-
-      
         const insertQuery = createQueries.createTicket;
         await connection.query(insertQuery, [newTId, productId,customerId, assignee.AgentName, assignee.AgentId,CreatedDate,Priority, Subject, Description, Feedback, PhnNumber]);
-
-        
+        await connection.query(updateagent.updateTicketCountQuery,[newTId,assignee.AgentId])
         await connection.commit();
 
         return res.status(200).send({ message: "Ticket added successfully and assigned to agent...." });
@@ -70,83 +68,97 @@ router.post("/addTicket", async (req, res) => {
 });
 
 
-//status 
-router.put("/updateTicket/:TicketId", async(req, res) => {
+// Update Ticket
+router.put("/updateTicket/:TicketId", async (req, res) => {
     let connection;
     try {
         connection = await pool.getConnection();
         const { updateDate } = req.body;
         const { TicketId } = req.params;
+
+        // Validate input
         if (!updateDate || !TicketId) {
-            return res.status(400).send({ error: "All fields are required..." });
+            return res.status(400).send({ error: "Update date and TicketId are required." });
         }
 
         const [result] = await connection.query(updateQuery.updateTicketDetails, [updateDate, TicketId]);
+
+        // Check if the ticket was updated
         if (result.affectedRows === 0) {
-            return res.status(400).send({ error: "Error while updating the Resolved date..." });
+            return res.status(400).send({ error: "Ticket not found or unable to update the resolved date." });
         }
 
-        return res.status(200).send({ message: "Resolved date is updated." });
+        return res.status(200).send({ message: "Resolved date updated successfully." });
     } catch (error) {
-        console.error("Error in the updateTicket:", error);
-        return res.status(500).send({ error: "Internal Server Error..." });
+        console.error("Error updating ticket:", error);
+        return res.status(500).send({ error: "Internal Server Error" });
     } finally {
-        if (connection) connection.release(); // Always release the connection
+        if (connection) connection.release();
     }
 });
 
-router.get("/getAllTickets", async(req, res) => {
+// Get All Tickets
+router.get("/getAllTickets", async (req, res) => {
     let connection;
     try {
         connection = await pool.getConnection();
         const [result] = await connection.query(getQueries.getAllTickets);
         return res.status(200).send(result);
     } catch (error) {
-        console.error("Error in the getAllTickets:", error);
+        console.error("Error fetching all tickets:", error);
         return res.status(500).send({ error: "Internal Server Error" });
-    } 
+    } finally {
+        if (connection) connection.release();
+    }
 });
 
+// Get Pending Tickets (Status: Open)
 router.get("/getPendingTickets", async (req, res) => {
     let connection;
     try {
         connection = await pool.getConnection();
         const [result] = await connection.query(getQueries.getTicketByStatusOpen);
-        // console.log(result)
         return res.status(200).send(result);
     } catch (error) {
-        console.error("Error in the getPendingTickets:", error);
+        console.error("Error fetching pending tickets:", error);
         return res.status(500).json({ error: "Internal Server Error" });
+    } finally {
+        if (connection) connection.release();
     }
 });
 
-router.get("/getResolvedTickets", async(req, res) => {
+// Get Resolved Tickets (Status: Closed)
+router.get("/getResolvedTickets", async (req, res) => {
     let connection;
     try {
         connection = await pool.getConnection();
         const [result] = await connection.query(getQueries.getTicketByStatusClose);
         return res.status(200).send(result);
     } catch (error) {
-        console.error("Error in the getAllTickets:", error);
+        console.error("Error fetching resolved tickets:", error);
         return res.status(500).send({ error: "Internal Server Error" });
-    } 
+    } finally {
+        if (connection) connection.release();
+    }
 });
 
-
-router.get("/getTicketCount", async(req, res) => {
+// Get Ticket Count
+router.get("/getTicketCount", async (req, res) => {
     let connection;
     try {
         connection = await pool.getConnection();
         const [result] = await connection.query(getQueries.getTicketCount);
         return res.status(200).send(result);
     } catch (error) {
-        console.error("Error in the getAllTickets:", error);
+        console.error("Error fetching ticket count:", error);
         return res.status(500).send({ error: "Internal Server Error" });
-    } 
+    } finally {
+        if (connection) connection.release();
+    }
 });
 
+// Get Ticket Status by TicketId
 router.get("/getTicketStatus/:TicketId", async (req, res) => {
-
     let connection;
     try {
         connection = await pool.getConnection();
@@ -154,33 +166,40 @@ router.get("/getTicketStatus/:TicketId", async (req, res) => {
         if (!TicketId) {
             return res.status(400).send({ error: "TicketId is required" });
         }
+
         const [result] = await connection.query(getQueries.getTicketStatus, [TicketId]);
         if (result.length === 0) {
             return res.status(404).send({ error: "Ticket not found" });
         }
 
-        return res.status(200).send(result[0].Status);
+        return res.status(200).send({ status: result[0].Status });
     } catch (error) {
         console.error("Error fetching ticket status:", error);
         return res.status(500).send({ error: "Internal Server Error" });
-    } 
+    } finally {
+        if (connection) connection.release();
+    }
 });
-router.get('/getticketsbymonth',async(req,res)=>{
+
+// Get Tickets by Month
+router.get('/getticketsbymonth', async (req, res) => {
     let connection;
     try {
         connection = await pool.getConnection();
-        const [results] = await connection.query(getQueries.getTicketsbymonth)
+        const [results] = await connection.query(getQueries.getTicketsbymonth);
+
         const formattedResults = results.map(row => ({
             month: row.Month,
             TicketsCount: row.TicketsCount
         }));
 
-        res.status(200).send(formattedResults);
+        return res.status(200).send(formattedResults);
     } catch (err) {
         console.error('Error retrieving tickets count by month:', err.stack);
-        res.status(500).send({ error: "Internal server error." });
+        return res.status(500).send({ error: "Internal server error." });
+    } finally {
+        if (connection) connection.release();
     }
-})
-
+});
 
 module.exports = router;
