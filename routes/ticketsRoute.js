@@ -73,15 +73,15 @@ router.put("/updateTicket/:TicketId", async (req, res) => {
     let connection;
     try {
         connection = await pool.getConnection();
-        const { updateDate } = req.body;
+        const { ResolvedDate,Status } = req.body;
         const { TicketId } = req.params;
 
         // Validate input
-        if (!updateDate || !TicketId) {
+        if (!ResolvedDate || !TicketId ||!Status) {
             return res.status(400).send({ error: "Update date and TicketId are required." });
         }
 
-        const [result] = await connection.query(updateQuery.updateTicketDetails, [updateDate, TicketId]);
+        const [result] = await connection.query(updateQuery.updateTicketDetails, [ResolvedDate, Status,TicketId]);
 
         // Check if the ticket was updated
         if (result.affectedRows === 0) {
