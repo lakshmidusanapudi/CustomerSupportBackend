@@ -1,6 +1,7 @@
 const express = require("express");
 const agentRoutes = require("./routes/agentsRoute.js");
 const ticketRoutes = require("./routes/ticketsRoute.js");
+const newRoutes=require('./routes/new.js')
 const cors = require("cors");
 require("dotenv").config();
 // const port = process.env.PORT || 4000
@@ -12,6 +13,7 @@ app.use(cors());
 
 app.use("/agents", agentRoutes);
 app.use("/tickets", ticketRoutes);
+app.use("/ticket",newRoutes)
 app.listen(5000, async () => {
     console.log(`Server running on the port`,5000);
 });
