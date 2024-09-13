@@ -1,5 +1,6 @@
 {
     "updateTicketDetails": "Update tickets_fact SET  Status = ? WHERE TicketId = ?",
-    "updateassingedstatus":"Update tickets_fact set Status='PENDING' && AssignedStatus=''"
+    "updateassingedstatus":"Update tickets_fact set Status='PENDING' && AssignedStatus='Assigned' where TicketId=?",
+    "updateticketstatus":"Update tickets_fact set Status='CLOSED' && AssignedStatus='Completed' where TicketId=?"
 
 }

@@ -3,8 +3,7 @@ const createQueries = require("../queries/tickets/post.json");
 const getQueries = require("../queries/tickets/get.json");
 const connection = require("../db/config.js");
 const updateQuery = require("../queries/tickets/put.json");
-const getAgentQuery = require("../queries/agents/get.json");
-const updateagent=require('../queries/agents/put.json')
+
 const router = express.Router();
 
 router.post("/addTicket", async (req, res) => {
@@ -81,12 +80,42 @@ router.get("/getPendingTickets", async (req, res) => {
     } 
 });
 
-router.put("/updateassignedstatus",async(req,res)=>{
+router.put("/updateassignedstatus/:id",async(req,res)=>{
     try {
-        const [result] = await connection.query(getQueries.getopentickets,['PENDING']);
-        return res.status(200).send(result);
-    } catch (error) {
-        console.error("Error fetching all tickets:", error);
+        const {id}=req.params;
+        const [result] = await connection.query(getQueries.getopentickets,[id]);
+        if (result.affectedRows === 0) {
+            return res.status(400).send({ error: "Ticket not found or unable to assigned" });
+        }
+        return res.status(200).send({ message: "Ticket assigned successfully." });
+    }catch (error) {
+        console.error("Error in assigning:", error);
+        return res.status(500).send({ error: "Internal Server Error" });
+    } 
+})
+router.put("/updateassignedstatus/:id",async(req,res)=>{
+    try {
+        const {id}=req.params;
+        const [result] = await connection.query(updateQuery.updateassingedstatus,[id]);
+        if (result.affectedRows === 0) {
+            return res.status(400).send({ error: "Ticket not found or unable to assigned" });
+        }
+        return res.status(200).send({ message: "Ticket assigned successfully." });
+    }catch (error) {
+        console.error("Error in assigning:", error);
+        return res.status(500).send({ error: "Internal Server Error" });
+    } 
+})
+router.put("/updateticketstatus/:id",async(req,res)=>{
+    try {
+        const {id}=req.params;
+        const [result] = await connection.query(updateQuery.updateticketstatus,[id]);
+        if (result.affectedRows === 0) {
+            return res.status(400).send({ error: "Ticket not found or unable to assigned" });
+        }
+        return res.status(200).send({ message: "Ticket assigned successfully." });
+    }catch (error) {
+        console.error("Error in assigning:", error);
         return res.status(500).send({ error: "Internal Server Error" });
     } 
 })
