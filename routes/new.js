@@ -80,19 +80,7 @@ router.get("/getPendingTickets", async (req, res) => {
     } 
 });
 
-router.put("/updateassignedstatus/:id",async(req,res)=>{
-    try {
-        const {id}=req.params;
-        const [result] = await connection.query(getQueries.getopentickets,[id]);
-        if (result.affectedRows === 0) {
-            return res.status(400).send({ error: "Ticket not found or unable to assigned" });
-        }
-        return res.status(200).send({ message: "Ticket assigned successfully." });
-    }catch (error) {
-        console.error("Error in assigning:", error);
-        return res.status(500).send({ error: "Internal Server Error" });
-    } 
-})
+
 router.put("/updateassignedstatus/:id",async(req,res)=>{
     try {
         const {id}=req.params;
