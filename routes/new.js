@@ -107,6 +107,45 @@ router.put("/updateticketstatus/:id",async(req,res)=>{
         return res.status(500).send({ error: "Internal Server Error" });
     } 
 })
+router.put("/updateTicket/:TicketId", async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+        const { Status, Description, DueDate } = req.body;
+        const { TicketId } = req.params;
+
+        let updateFields = [];
+        let values = [];
+
+        if (Status) {
+            updateFields.push("Status = ?");
+            values.push(Status);
+        }
+        if (Description) {
+            updateFields.push("Description = ?");
+            values.push(Description);
+        }
+        if (DueDate) {
+            updateFields.push("DueDate = ?");
+            values.push(DueDate);
+        }
+        values.push(TicketId);
+        const updateQuery = `UPDATE Customer_Support.Tickets SET ${updateFields.join(", ")} WHERE TicketId = ?`;
+        const [result] = await connection.query(updateQuery, values);
+        if (result.affectedRows === 0) {
+            return res.status(400).send({ error: "Ticket not found or unable to update the details." });
+        }
+
+        return res.status(200).send({ message: "Ticket details updated successfully." });
+    } catch (error) {
+        console.error("Error updating ticket:", error);
+        return res.status(500).send({ error: "Internal Server Error" });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+
 module.exports = router;
 
 
