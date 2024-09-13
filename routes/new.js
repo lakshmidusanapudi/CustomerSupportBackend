@@ -10,8 +10,8 @@ router.post("/addTicket", async (req, res) => {
     
     try {
         await connection.query(createQueries.createTicketsTable);
-        const { productId, customerId, Subject, Description, PhnNumber } = req.body;
-        if (!productId || !customerId || !Subject || !Description || !PhnNumber) {
+        const { productId, customerId, Subject, Description, PhnNumber ,TicketCategory} = req.body;
+        if (!productId || !customerId || !Subject || !Description || !PhnNumber||!TicketCategory) {
             return res.status(400).send({ error: "All fields are required..." });
         }
         const [latestTId] = await connection.query(getQueries.getTicket);
@@ -26,7 +26,7 @@ router.post("/addTicket", async (req, res) => {
             newTId = `TID${newId}`;
         }
         const insertQuery = createQueries.createTicket;
-        await connection.query(insertQuery, [newTId, productId,customerId, Subject, Description, PhnNumber]);
+        await connection.query(insertQuery, [newTId, productId,customerId, Subject, Description, PhnNumber,TicketCategory]);
         // await connection.query(updateagent.updateTicketCountQuery,[newTId,assignee.AgentId])
         
         return res.status(200).send({ message: "Ticket added successfully and assigned to agent...." });

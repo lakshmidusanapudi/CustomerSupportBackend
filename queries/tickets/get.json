@@ -1,13 +1,13 @@
 {
-    "getAllTickets": "SELECT * FROM tickets_fact ;",
-    "getTicketByTicketId": "SELECT * FROM tickets_fact WHERE TicketId = ?",
-    "getTicket": "SELECT * FROM tickets_fact ORDER BY TicketId DESC LIMIT 1",
-    "getTicketCount": "SELECT COUNT(*) As count FROM tickets_fact",
-    "getTicketStatus":"Select Status from tickets_fact where TicketId=?",
-    "getTicketByStatusOpen":"SELECT COUNT(*) AS count FROM tickets_fact WHERE Status = 'OPEN'",
-    "getTicketByStatusClose":"SELECT COUNT(*) As count FROM tickets_fact where Status = 'CLOSED'",
-    "getTicketsbymonth":"SELECT MONTH(CreatedDate) AS Month, COUNT(*) AS TicketsCount FROM tickets_fact GROUP BY MONTH(CreatedDate) ORDER BY Month;",
-    "getticketsbyagentid":"Select * from tickets_fact where AgentId=?",
-    "getopentickets":"Select * from tickets_fact where Status=?"
+    "getAllTickets": "SELECT * FROM Tickets ;",
+    "getTicketByTicketId": "SELECT * FROM Tickets WHERE TicketId = ?",
+    "getTicket": "SELECT * FROM Tickets ORDER BY TicketId DESC LIMIT 1",
+    "getTicketCount": "SELECT COUNT(*) As count FROM Tickets",
+    "getTicketStatus":"Select Status from Tickets where TicketId=?",
+    "getTicketByStatusOpen":"SELECT COUNT(*) AS count FROM Tickets WHERE Status = 'OPEN'",
+    "getTicketByStatusClose":"SELECT COUNT(*) As count FROM Tickets where Status = 'CLOSED'",
+    "getTicketsbymonth":"SELECT MONTH(CreatedDate) AS Month, COUNT(*) AS TicketsCount FROM Tickets GROUP BY MONTH(CreatedDate) ORDER BY Month;",
+    "getticketsbyagentid":"Select * from Tickets where AgentId=?",
+    "getopentickets":"Select * from Tickets where Status=?"
 
 }
