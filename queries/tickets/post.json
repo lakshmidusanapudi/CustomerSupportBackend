@@ -1,4 +1,4 @@
 {
     "createTicketsTable": "CREATE TABLE IF NOT EXISTS tickets_fact(TicketId VARCHAR(255) PRIMARY KEY,productId VARCHAR(255) DEFAULT NULL, customerId VARCHAR(255), AssigneeName Varchar(255), AgentId VARCHAR(255), Status VARCHAR(255) DEFAULT 'OPEN', CreatedDate VARCHAR(50), ResolvedDate VARCHAR(50) DEFAULT NULL, Priority VARCHAR(255) DEFAULT NULL, Subject VARCHAR(255), Description TEXT ,Feedback Text,PhnNumber Varchar(225));",
-    "createTicket": "INSERT INTO tickets_fact(TicketId,productId, customerId, AssigneeName, AgentId ,Priority, Subject, Description,Feedback,PhnNumber) VALUES (?, ?, ?, ?, ?, ?,?,?,?,?,?);"
+    "createTicket": "INSERT INTO tickets_fact(TicketId,productId, customerId, AssigneeName, AgentId ,Priority, Subject, Description,Feedback,PhnNumber) VALUES (?, ?, ?, ?, ?, ?,?,?,?,?);"
 }
