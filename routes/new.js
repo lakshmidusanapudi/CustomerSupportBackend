@@ -108,9 +108,9 @@ router.put("/updateticketstatus/:id",async(req,res)=>{
     } 
 })
 router.put("/updateTicket/:TicketId", async (req, res) => {
-    let connection;
+   
     try {
-        connection = await pool.getConnection();
+      
         const { Status, Description, DueDate } = req.body;
         const { TicketId } = req.params;
 
@@ -140,9 +140,7 @@ router.put("/updateTicket/:TicketId", async (req, res) => {
     } catch (error) {
         console.error("Error updating ticket:", error);
         return res.status(500).send({ error: "Internal Server Error" });
-    } finally {
-        if (connection) connection.release();
-    }
+    } 
 });
 
 
