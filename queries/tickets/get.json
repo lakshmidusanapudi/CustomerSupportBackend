@@ -4,11 +4,13 @@
     "getTicket": "SELECT * FROM Tickets ORDER BY TicketId DESC LIMIT 1",
     "getTicketCount": "SELECT COUNT(*) As count FROM Tickets",
     "getTicketStatus":"Select Status from Tickets where TicketId=?",
-    "getTicketByStatusOpen":"SELECT COUNT(*) AS count FROM Tickets WHERE Status = 'OPEN'",
-    "getTicketByStatusClose":"SELECT COUNT(*) As count FROM Tickets where Status = 'CLOSED'",
+    "getTicketByStatusOpen":"SELECT COUNT(*) AS count FROM Tickets WHERE Status = '0'",
+    "getTicketByStatusClose":"SELECT COUNT(*) As count FROM Tickets where Status = '2'",
+    "getTicketByStatusPending":"SELECT COUNT(*) As count FROM Tickets where Status = '1'",
     "getTicketsbymonth":"SELECT MONTH(CreatedDate) AS Month, COUNT(*) AS TicketsCount FROM Tickets GROUP BY MONTH(CreatedDate) ORDER BY Month;",
     "getticketsbyagentid":"Select * from Tickets where AgentId=?",
     "getopentickets":"Select * from Tickets where Status=?",
-    "getfeedback":"SELECT  SUM(CASE WHEN ChurnPrediction = 1 THEN 1 ELSE 0 END) AS `Likely Not to Continue`,SUM(CASE WHEN ChurnPrediction = 0 THEN 1 ELSE 0 END) AS `Likely to Continue`FROM b2b.churn_predictions;"
+    "getfeedback":"SELECT  SUM(CASE WHEN ChurnPrediction = 1 THEN 1 ELSE 0 END) AS `Likely Not to Continue`,SUM(CASE WHEN ChurnPrediction = 0 THEN 1 ELSE 0 END) AS `Likely to Continue`FROM b2b.churn_predictions;",
+    "getfeedbackbystatus":"SELECT Status,SUM(CASE WHEN ChurnPrediction = 1 THEN 1 ELSE 0 END) AS LikelyToChurn,SUM(CASE WHEN ChurnPrediction = 0 THEN 1 ELSE 0 END) AS NotLikelyToChurn FROM churn_predictions GROUP BY Status;"
 
 }

@@ -52,7 +52,7 @@ router.get("/getAllTickets", async (req, res) => {
 
 router.get("/getOpenTickets", async (req, res) => {
     try {
-        const [result] = await connection.query(getQueries.getopentickets,['OPEN']);
+        const [result] = await connection.query(getQueries.getopentickets,['0']);
         return res.status(200).send(result);
     } catch (error) {
         console.error("Error fetching all tickets:", error);
@@ -62,7 +62,7 @@ router.get("/getOpenTickets", async (req, res) => {
 
 router.get("/getClosedTickets", async (req, res) => {
     try {
-        const [result] = await connection.query(getQueries.getopentickets,['CLOSED']);
+        const [result] = await connection.query(getQueries.getopentickets,['2']);
         return res.status(200).send(result);
     } catch (error) {
         console.error("Error fetching all tickets:", error);
@@ -72,7 +72,7 @@ router.get("/getClosedTickets", async (req, res) => {
 
 router.get("/getPendingTickets", async (req, res) => {
     try {
-        const [result] = await connection.query(getQueries.getopentickets,['PENDING']);
+        const [result] = await connection.query(getQueries.getopentickets,['1']);
         return res.status(200).send(result);
     } catch (error) {
         console.error("Error fetching all tickets:", error);
@@ -160,6 +160,19 @@ router.get("/getTicketStatus/:TicketId", async (req, res) => {
 router.get('/getfeedback',async (req,res)=>{
     try{    
     const [result]=await connection.query(getQueries.getfeedback);
+   
+    return res.status(200).send(result)
+}
+catch(error)
+{
+    console.error("Error in fetching :", error);
+        return res.status(500).send({ error: "Internal Server Error" });
+}
+})
+
+router.get('/getfeedbackbystatus',async (req,res)=>{
+    try{    
+    const [result]=await connection.query(getQueries.getfeedbackbystatus);
    
     return res.status(200).send(result)
 }
