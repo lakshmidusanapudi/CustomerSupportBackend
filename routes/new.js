@@ -80,7 +80,6 @@ router.get("/getPendingTickets", async (req, res) => {
     } 
 });
 
-
 router.put("/updateassignedstatus/:id",async(req,res)=>{
     try {
         const {id}=req.params;
@@ -158,7 +157,29 @@ router.get("/getTicketStatus/:TicketId", async (req, res) => {
         return res.status(500).send({ error: "Internal Server Error" });
     } 
 });
-
+router.get('/getfeedback',async (req,res)=>{
+    try{    
+    const [result]=await connection.query(getQueries.getfeedback);
+   
+    return res.status(200).send(result)
+}
+catch(error)
+{
+    console.error("Error in fetching :", error);
+        return res.status(500).send({ error: "Internal Server Error" });
+}
+})
+// router.get('/getnegative',async(req,res)=>{
+//  try{
+//    const [result]=await connection.query(getQueries.getnegativefeedback);
+//    return res.status(200).send({negative:result})
+//  }
+//  catch(error)
+//  {
+//     console.error("Error in fetching :", error);
+//         return res.status(500).send({ error: "Internal Server Error" });
+//  }
+// })
 
 module.exports = router;
 

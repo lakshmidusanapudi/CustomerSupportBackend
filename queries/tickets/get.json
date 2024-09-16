@@ -8,6 +8,7 @@
     "getTicketByStatusClose":"SELECT COUNT(*) As count FROM Tickets where Status = 'CLOSED'",
     "getTicketsbymonth":"SELECT MONTH(CreatedDate) AS Month, COUNT(*) AS TicketsCount FROM Tickets GROUP BY MONTH(CreatedDate) ORDER BY Month;",
     "getticketsbyagentid":"Select * from Tickets where AgentId=?",
-    "getopentickets":"Select * from Tickets where Status=?"
+    "getopentickets":"Select * from Tickets where Status=?",
+    "getfeedback":"SELECT  SUM(CASE WHEN ChurnPrediction = 1 THEN 1 ELSE 0 END) AS `Likely Not to Continue`,SUM(CASE WHEN ChurnPrediction = 0 THEN 1 ELSE 0 END) AS `Likely to Continue`FROM b2b.churn_predictions;"
 
 }

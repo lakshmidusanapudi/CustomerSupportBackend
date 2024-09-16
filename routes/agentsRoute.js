@@ -77,5 +77,23 @@ router.put("/updateStatus/:id", async(req, res) => {
     }
 })
 
-
+router.get("/getAgentById/:id", async( req, res ) => {
+    try {
+        const {id} = req.params;
+        // console.log(AgentId)
+        if(!id) 
+        {
+            return res.status(400).send({error: "Parameter is required..."});
+        }
+        const [row] = await connection.execute(getQueries.getAgentByAgentId, [id]);
+        return res.status(200).send(row);
+    } catch (error) {
+        console.log("error in the getagentById, ", error);
+        return res.status(500).send({error: "Internal Server error"});
+    }
+});
+router.get('/getagents',async (req,res)=>{
+    try{}
+    catch{}
+})
 module.exports = router;
