@@ -45,9 +45,7 @@ router.get("/getAllTickets", async (req, res) => {
     } catch (error) {
         console.error("Error fetching all tickets:", error);
         return res.status(500).send({ error: "Internal Server Error" });
-    } finally {
-        if (connection) connection.release();
-    }
+    } 
 });
 
 router.get("/getOpenTickets", async (req, res) => {
@@ -157,9 +155,56 @@ router.get("/getTicketStatus/:TicketId", async (req, res) => {
         return res.status(500).send({ error: "Internal Server Error" });
     } 
 });
+// Get Pending Tickets (Status: Open)
+router.get("/getPendingTicketsCount", async (req, res) => {
+    try { 
+        const [result] = await connection.query(getQueries.getTicketByStatusOpen);
+        return res.status(200).send(result);
+    } catch (error) {
+        console.error("Error fetching pending tickets:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    } 
+});
+
+// Get Resolved Tickets (Status: Closed)
+router.get("/getResolvedTicketsCount", async (req, res) => {
+   
+    try {
+       
+        const [result] = await connection.query(getQueries.getTicketByStatusClose);
+        return res.status(200).send(result);
+    } catch (error) {
+        console.error("Error fetching resolved tickets:", error);
+        return res.status(500).send({ error: "Internal Server Error" });
+    } 
+});
+
+// Get Ticket Count
+router.get("/getTicketCount", async (req, res) => {
+   
+    try {
+        const [result] = await connection.query(getQueries.getTicketCount);
+        return res.status(200).send(result);
+    } catch (error) {
+        console.error("Error fetching ticket count:", error);
+        return res.status(500).send({ error: "Internal Server Error" });
+    } 
+});
 router.get('/getfeedback',async (req,res)=>{
     try{    
     const [result]=await connection.query(getQueries.getfeedback);
+    return res.status(200).send(result)
+}
+catch(error)
+{
+    console.error("Error in fetching :", error);
+    return res.status(500).send({ error: "Internal Server Error" });
+}
+})
+
+router.get('/getfeedbackbystatus',async (req,res)=>{
+    try{    
+    const [result]=await connection.query(getQueries.getfeedbackbystatus);
    
     return res.status(200).send(result)
 }
@@ -169,10 +214,9 @@ catch(error)
         return res.status(500).send({ error: "Internal Server Error" });
 }
 })
-
-router.get('/getfeedbackbystatus',async (req,res)=>{
+router.get('/getassigneestatus',async (req,res)=>{
     try{    
-    const [result]=await connection.query(getQueries.getfeedbackbystatus);
+    const [result]=await connection.query(getQueries.getassigneestatus);
    
     return res.status(200).send(result)
 }

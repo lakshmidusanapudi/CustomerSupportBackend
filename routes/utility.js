@@ -1,1 +1,0 @@
-const getQueries = require("../queries/agents/get.json");

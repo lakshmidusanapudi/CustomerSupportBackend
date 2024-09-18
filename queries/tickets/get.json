@@ -11,6 +11,7 @@
     "getticketsbyagentid":"Select * from Tickets where AgentId=?",
     "getopentickets":"Select * from Tickets where Status=?",
     "getfeedback":"SELECT  SUM(CASE WHEN ChurnPrediction = 1 THEN 1 ELSE 0 END) AS `Likely Not to Continue`,SUM(CASE WHEN ChurnPrediction = 0 THEN 1 ELSE 0 END) AS `Likely to Continue`FROM b2b.churn_predictions;",
-    "getfeedbackbystatus":"SELECT Status,SUM(CASE WHEN ChurnPrediction = 1 THEN 1 ELSE 0 END) AS LikelyToChurn,SUM(CASE WHEN ChurnPrediction = 0 THEN 1 ELSE 0 END) AS NotLikelyToChurn FROM churn_predictions GROUP BY Status;"
+    "getfeedbackbystatus":"SELECT Status,SUM(CASE WHEN ChurnPrediction = 1 THEN 1 ELSE 0 END) AS NotLikelyToContinue,SUM(CASE WHEN ChurnPrediction = 0 THEN 1 ELSE 0 END) AS LikelyToContinue FROM churn_predictions GROUP BY Status;",
+    "getassigneestatus":"SELECT CASE WHEN AssignedStatus = '1' THEN 'Assigned' WHEN AssignedStatus = '0' THEN 'Not Assigned' WHEN AssignedStatus = '2' THEN 'Completed' END AS Status,COUNT(*) AS status_count FROM tickets WHERE AssignedStatus IN ('1', '0', '2') GROUP BY AssignedStatus;"
 
 }
